@@ -1,0 +1,69 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bank-account-prod
+  namespace: argocd
+  labels:
+    app: bank-account
+    environment: prod
+    team: backend
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=true
+    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/hook: PreSync,Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+
+spec:
+  # Projet ArgoCD
+  project: default
+  
+  # Source du code
+  source:
+    repoURL: https://github.com/bonnefoipatrick/bank-account-ia.git
+    targetRevision: main
+    path: bank-account/k8s/overlays/prod
+    
+    # Configuration Kustomize
+    plugin:
+      name: kustomize
+      env:
+        - name: KUSTOMIZE_PLUGIN_HOME
+          value: /tmp/kustomize
+  
+  # Destination
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: bank-account-prod
+    
+  # Stratégie de synchronisation (manuel pour la production)
+  syncPolicy:
+    automated:
+      prune: false  # Désactivé pour la production
+      selfHeal: false  # Désactivé pour la production
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+      - Prune=true
+      - ApplyOutOfSyncOnly=true
+    
+    # Synchronisation manuelle uniquement
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 1m
+
+  # Ignorer les différences
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
+
+  # Notifications
+  # info:
+  #   - name: slack-notifications
+  #     value: "bank-account-prod"
+  #   - name: email-notifications
+  #     value: "team@company.com"

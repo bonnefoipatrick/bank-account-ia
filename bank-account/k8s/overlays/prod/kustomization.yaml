@@ -1,0 +1,62 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Hériter de la base
+bases:
+  - ../../base
+
+# Namespace pour la production
+namespace: bank-account-prod
+
+# Nom du suffixe pour les ressources
+nameSuffix: -prod
+
+# Patches pour l'environnement de production
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 2
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: "prod"
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: ENVIRONMENT
+          value: "production"
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "2Gi"
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "2"
+
+# ConfigMap Generator pour les variables spécifiques à prod
+configMapGenerator:
+  - name: bank-account-prod-config
+    behavior: merge
+    literals:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_H2_CONSOLE_ENABLED=false
+      - SPRING_JPA_SHOW_SQL=false
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-prod:9092
+
+# Images avec tag spécifique (utiliser une version stable)
+images:
+  - name: ghcr.io/bonnefoipatrick/bank-account-ia
+    newName: ghcr.io/bonnefoipatrick/bank-account-ia
+    newTag: "1.0.0"
+
+# Annotations pour ArgoCD
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "2"
+
+# Ressources supplémentaires pour la production
+# resources:
+#   - hpa.yaml
+#   - pdb.yaml

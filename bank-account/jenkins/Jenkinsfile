@@ -1,0 +1,157 @@
+pipeline {
+    agent any
+
+    environment {
+        // Configuration Docker
+        DOCKER_REGISTRY = 'ghcr.io'
+        DOCKER_IMAGE_NAME = 'bonnefoipatrick/bank-account-ia'
+        
+        // Configuration Kubernetes
+        K8S_NAMESPACE_DEV = 'bank-account-dev'
+        K8S_NAMESPACE_PROD = 'bank-account-prod'
+        
+        // Configuration Git
+        GIT_REPO = 'https://github.com/bonnefoipatrick/bank-account-ia.git'
+        
+        // Version de l'image
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+    }
+
+    stages {
+        // Étape 1: Checkout du code
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        // Étape 2: Build avec Gradle
+        stage('Build') {
+            steps {
+                dir('bank-account') {
+                    sh '''
+                        # Installer Gradle si nécessaire
+                        if ! command -v gradle &> /dev/null; then
+                            echo "Gradle not found, trying to use wrapper..."
+                            chmod +x ./gradlew
+                            ./gradlew --version
+                        fi
+                        
+                        # Build tous les modules
+                        ./gradlew clean build --no-daemon --stacktrace
+                    '''
+                }
+            }
+            post {
+                always {
+                    # Archiver les artefacts
+                    archiveArtifacts artifacts: 'bank-account/**/build/libs/*.jar', fingerprint: true
+                    archiveArtifacts artifacts: 'bank-account/**/build/reports/tests/**/*.html', fingerprint: true
+                }
+            }
+        }
+
+        // Étape 3: Tests unitaires
+        stage('Test') {
+            steps {
+                dir('bank-account') {
+                    sh '''
+                        ./gradlew test --no-daemon --stacktrace
+                    '''
+                }
+            }
+            post {
+                always {
+                    # Publier les résultats des tests
+                    junit '**/build/test-results/**/*.xml'
+                }
+            }
+        }
+
+        // Étape 4: Build de l'image Docker
+        stage('Docker Build') {
+            steps {
+                dir('bank-account') {
+                    script {
+                        // Build de l'image Docker
+                        sh """
+                            docker build \\
+                                -t ${DOCKER_IMAGE_NAME}:${IMAGE_TAG} \\
+                                -t ${DOCKER_IMAGE_NAME}:latest \\
+                                -f app/src/main/docker/Dockerfile \\
+                                .
+                        """
+                        
+                        # Login vers le registry (si nécessaire)
+                        // withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        //     sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} ${DOCKER_REGISTRY}"
+                        // }
+                        
+                        # Pousser l'image (désactivé par défaut, à activer en production)
+                        // sh "docker push ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}"
+                        // sh "docker push ${DOCKER_IMAGE_NAME}:latest"
+                    }
+                }
+            }
+        }
+
+        // Étape 5: Déploiement en développement (optionnel)
+        stage('Deploy to Dev') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    echo "Déploiement en développement..."
+                    // Utiliser kubectl ou ArgoCD CLI pour déclencher le déploiement
+                    sh """
+                        # Mettre à jour l'image dans le manifest Kubernetes
+                        # kubectl set image deployment/bank-account-app bank-account-app=${DOCKER_IMAGE_NAME}:${IMAGE_TAG} -n ${K8S_NAMESPACE_DEV}
+                        
+                        # Ou utiliser ArgoCD pour synchroniser
+                        # argocd app sync bank-account-dev
+                        
+                        echo "Pour déployer manuellement avec ArgoCD:"
+                        echo "argocd app sync bank-account-dev"
+                    """
+                }
+            }
+        }
+
+        // Étape 6: Déploiement en production (manuel)
+        stage('Deploy to Prod') {
+            when {
+                branch 'main'
+                // expression { currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    input message: 'Confirmer le déploiement en production?', ok: 'Deploy'
+                    script {
+                        echo "Déploiement en production..."
+                        sh """
+                            # kubectl set image deployment/bank-account-app bank-account-app=${DOCKER_IMAGE_NAME}:${IMAGE_TAG} -n ${K8S_NAMESPACE_PROD}
+                            # argocd app sync bank-account-prod
+                            echo "Pour déployer manuellement avec ArgoCD:"
+                            echo "argocd app sync bank-account-prod"
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Nettoyer l'espace de travail
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline terminé avec succès!'
+        }
+        failure {
+            echo 'Pipeline échoué!'
+            // Envoyer une notification (Slack, Email, etc.)
+        }
+    }
+}

@@ -1,0 +1,50 @@
+# Gradle
+.gradle/
+build/
+*.jar
+*.war
+*.ear
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.docker/
+
+# Kubernetes
+k8s/
+argocd/
+jenkins/
+
+# Documentation
+*.md
+README.md
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Test
+*Test*.kt
+*Spec*.kt
+
+# Temporary files
+*.tmp
+*.swp

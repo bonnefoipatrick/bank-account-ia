@@ -1,0 +1,53 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Hériter de la base
+bases:
+  - ../../base
+
+# Namespace pour le développement
+namespace: bank-account-dev
+
+# Nom du suffixe pour les ressources
+nameSuffix: -dev
+
+# Patches pour l'environnement de développement
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: "dev"
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1/value
+        value: "8080"
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: ENVIRONMENT
+          value: "development"
+
+# ConfigMap Generator pour les variables spécifiques à dev
+configMapGenerator:
+  - name: bank-account-dev-config
+    behavior: merge
+    literals:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - SPRING_JPA_SHOW_SQL=true
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-dev:9092
+
+# Images avec tag spécifique
+images:
+  - name: ghcr.io/bonnefoipatrick/bank-account-ia
+    newName: ghcr.io/bonnefoipatrick/bank-account-ia
+    newTag: latest
+
+# Annotations pour ArgoCD
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "1"
