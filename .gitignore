@@ -1,0 +1,40 @@
+# Build files
+build/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Gradle
+.gradle/
+gradlew
+gradlew.bat
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IntelliJ
+out/
+
+# Eclipse
+.bin/
+.project
+.settings/
+.classpath
+
+# VS Code
+.vscode/
