@@ -45,6 +45,29 @@ dependencies {
     // Tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
+    
+    // Spring Security Test
+    testImplementation("org.springframework.security:spring-security-test")
+    
+    // Mockito
+    testImplementation("org.mockito:mockito-core:5.3.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    
+    // AssertJ
+    testImplementation("org.assertj:assertj-core:3.24.2")
+    
+    // Cucumber pour les tests BDD
+    testImplementation("io.cucumber:cucumber-java:7.14.0")
+    testImplementation("io.cucumber:cucumber-junit:7.14.0")
+    testImplementation("io.cucumber:cucumber-spring:7.14.0")
+    
+    // RestAssured pour les tests API
+    testImplementation("io.rest-assured:rest-assured:5.3.2")
+    testImplementation("io.rest-assured:json-path:5.3.2")
+    testImplementation("io.rest-assured:xml-path:5.3.2")
+    
+    // JSON Assert pour les tests API
+    testImplementation("org.skyscreamer:jsonassert:1.5.1")
 }
 
 tasks.withType<Test> {

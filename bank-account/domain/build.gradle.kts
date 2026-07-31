@@ -20,6 +20,13 @@ dependencies {
     // Tests
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+    
+    // Mockito pour les tests unitaires
+    testImplementation("org.mockito:mockito-core:5.3.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    
+    // AssertJ pour des assertions fluides
+    testImplementation("org.assertj:assertj-core:3.24.2")
 }
 
 tasks.withType<Test> {

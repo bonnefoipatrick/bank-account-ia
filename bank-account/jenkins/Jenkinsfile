@@ -15,6 +15,10 @@ pipeline {
         
         // Version de l'image
         IMAGE_TAG = "${env.BUILD_NUMBER}"
+        
+        // Configuration des scans de sécurité
+        RUN_SECURITY_SCANS = "true"
+        FAIL_ON_CRITICAL_VULNERABILITIES = "true"
     }
 
     stages {
@@ -25,7 +29,55 @@ pipeline {
             }
         }
 
-        // Étape 2: Build avec Gradle
+        // Étape 2: Scan de sécurité du code (avant le build)
+        stage('Security Scan - Code') {
+            when {
+                expression { env.RUN_SECURITY_SCANS == "true" }
+            }
+            steps {
+                dir('bank-account') {
+                    script {
+                        echo "Exécution du scan de sécurité du code..."
+                        sh '''
+                            chmod +x ./scripts/security/scan-code.sh
+                            ./scripts/security/scan-code.sh
+                        '''
+                    }
+                }
+            }
+            post {
+                always {
+                    // Archiver les rapports de sécurité
+                    archiveArtifacts artifacts: 'bank-account/build/reports/security/**/*', fingerprint: true
+                }
+            }
+        }
+
+        // Étape 3: Scan de sécurité des dépendances
+        stage('Security Scan - Dependencies') {
+            when {
+                expression { env.RUN_SECURITY_SCANS == "true" }
+            }
+            steps {
+                dir('bank-account') {
+                    script {
+                        echo "Exécution du scan de sécurité des dépendances..."
+                        sh '''
+                            chmod +x ./scripts/security/scan-dependencies.sh
+                            ./scripts/security/scan-dependencies.sh
+                        '''
+                    }
+                }
+            }
+            post {
+                always {
+                    // Archiver les rapports de sécurité
+                    archiveArtifacts artifacts: 'bank-account/build/reports/security/**/*', fingerprint: true
+                }
+            }
+        }
+
+        // Étape 4: Build avec Gradle
         stage('Build') {
             steps {
                 dir('bank-account') {
@@ -51,7 +103,7 @@ pipeline {
             }
         }
 
-        // Étape 3: Tests unitaires
+        // Étape 5: Tests unitaires
         stage('Test') {
             steps {
                 dir('bank-account') {
@@ -64,11 +116,48 @@ pipeline {
                 always {
                     # Publier les résultats des tests
                     junit '**/build/test-results/**/*.xml'
+                    archiveArtifacts artifacts: '**/build/reports/tests/**/*', fingerprint: true
                 }
             }
         }
 
-        // Étape 4: Build de l'image Docker
+        // Étape 6: Tests Cucumber (BDD)
+        stage('BDD Tests') {
+            steps {
+                dir('bank-account') {
+                    sh '''
+                        # Exécuter les tests Cucumber
+                        ./gradlew :infrastructure:test --tests "com.bankaccount.infrastructure.RunCucumberTest" --no-daemon --stacktrace
+                    '''
+                }
+            }
+            post {
+                always {
+                    # Archiver les rapports Cucumber
+                    archiveArtifacts artifacts: '**/target/cucumber-reports/**/*', fingerprint: true
+                }
+            }
+        }
+
+        // Étape 7: Tests de sécurité API
+        stage('Security Tests') {
+            steps {
+                dir('bank-account') {
+                    sh '''
+                        # Exécuter les tests de sécurité
+                        ./gradlew :infrastructure:test --tests "com.bankaccount.infrastructure.security.*" --no-daemon --stacktrace
+                    '''
+                }
+            }
+            post {
+                always {
+                    # Archiver les rapports de tests
+                    archiveArtifacts artifacts: '**/build/test-results/**/*.xml', fingerprint: true
+                }
+            }
+        }
+
+        // Étape 8: Build de l'image Docker
         stage('Docker Build') {
             steps {
                 dir('bank-account') {
@@ -82,12 +171,12 @@ pipeline {
                                 .
                         """
                         
-                        # Login vers le registry (si nécessaire)
+                        // Login vers le registry (si nécessaire)
                         // withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        //     sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} ${DOCKER_REGISTRY}"
+                        //     sh "docker login -u \${DOCKER_USER} -p \${DOCKER_PASS} \${DOCKER_REGISTRY}"
                         // }
                         
-                        # Pousser l'image (désactivé par défaut, à activer en production)
+                        // Pousser l'image (désactivé par défaut, à activer en production)
                         // sh "docker push ${DOCKER_IMAGE_NAME}:${IMAGE_TAG}"
                         // sh "docker push ${DOCKER_IMAGE_NAME}:latest"
                     }
@@ -95,7 +184,31 @@ pipeline {
             }
         }
 
-        // Étape 5: Déploiement en développement (optionnel)
+        // Étape 9: Scan de sécurité de l'image Docker
+        stage('Security Scan - Docker Image') {
+            when {
+                expression { env.RUN_SECURITY_SCANS == "true" }
+            }
+            steps {
+                dir('bank-account') {
+                    script {
+                        echo "Exécution du scan de sécurité de l'image Docker..."
+                        sh '''
+                            chmod +x ./scripts/security/scan-docker.sh
+                            ./scripts/security/scan-docker.sh
+                        '''
+                    }
+                }
+            }
+            post {
+                always {
+                    // Archiver les rapports de sécurité
+                    archiveArtifacts artifacts: 'bank-account/build/reports/security/**/*', fingerprint: true
+                }
+            }
+        }
+
+        // Étape 10: Déploiement en développement (optionnel)
         stage('Deploy to Dev') {
             when {
                 branch 'main'
@@ -118,7 +231,7 @@ pipeline {
             }
         }
 
-        // Étape 6: Déploiement en production (manuel)
+        // Étape 11: Déploiement en production (manuel)
         stage('Deploy to Prod') {
             when {
                 branch 'main'
@@ -145,13 +258,22 @@ pipeline {
         always {
             // Nettoyer l'espace de travail
             cleanWs()
+            
+            // Envoyer une notification si le build échoue
+            if (currentBuild.result == 'FAILURE') {
+                echo "Le pipeline a échoué!"
+                // Ici, vous pourriez ajouter une notification Slack/Email
+                // slackSend channel: '#devops', message: "Build échoué: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+            }
         }
         success {
             echo 'Pipeline terminé avec succès!'
+            // Notification de succès
+            // slackSend channel: '#devops', message: "Build réussi: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
         }
         failure {
             echo 'Pipeline échoué!'
-            // Envoyer une notification (Slack, Email, etc.)
+            // Notification d'échec
         }
     }
 }
