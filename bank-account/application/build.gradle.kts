@@ -1,12 +1,12 @@
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "2.4.10"
 }
 
 group = "com.bankaccount"
 version = "0.0.1-SNAPSHOT"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_25
 }
 
 repositories {
@@ -17,28 +17,28 @@ dependencies {
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     
-    // Dépendance sur le module domain
+    // Dpendance sur le module domain
     implementation(project(":domain"))
     
     // Spring Boot (pour les annotations @Component, @Service, etc.)
-    implementation("org.springframework.boot:spring-boot-starter:3.2.0")
+    implementation("org.springframework.boot:spring-boot-starter:4.0.0")
     
     // Validation
-    implementation("org.springframework.boot:spring-boot-starter-validation:3.2.0")
+    implementation("org.springframework.boot:spring-boot-starter-validation:4.0.0")
     
-    // Jackson pour la sérialisation
+    // Jackson pour la srialisation
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     
     // Tests
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
     
     // Mockito
-    testImplementation("org.mockito:mockito-core:5.3.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
     
     // AssertJ
-    testImplementation("org.assertj:assertj-core:3.24.2")
+    testImplementation("org.assertj:assertj-core:3.26.3")
 }
 
 tasks.withType<Test> {

@@ -1,5 +1,6 @@
 # Build stage
-FROM eclipse-temurin:17-jdk-jammy as build
+# Utilisation de Java 25 avec Eclipse Temurin
+FROM eclipse-temurin:25-jdk-jammy as build
 WORKDIR /workspace
 
 # Copier les fichiers Gradle
@@ -15,17 +16,18 @@ COPY bank-account/infrastructure ./bank-account/infrastructure/
 COPY bank-account/app ./bank-account/app/
 
 # Builder l'application avec Gradle
+# Note: Spring Boot 4.0.0 et Kotlin 2.4.10 ncessitent Java 25
 RUN cd bank-account && \
-    ./gradlew :app:bootJar --no-daemon --stacktrace
+    ./gradlew :app:bootJar --no-daemon --stacktrace --java-home=/usr/lib/jvm/eclipse-temurin-25-jdk-jammy
 
 # Runtime stage
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:25-jre-jammy
 WORKDIR /app
 
 # Copier le JAR construit
 COPY --from=build /workspace/bank-account/app/build/libs/*.jar app.jar
 
-# Créer un utilisateur non-root pour la sécurité
+# Creer un utilisateur non-root pour la scurit9
 RUN useradd -r -m -U -d /app -s /bin/false appuser && \
     chown -R appuser:appuser /app
 
@@ -36,6 +38,6 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/actuator/health || exit 1
 
-# Démarrer l'application
+# Dmarrer l'application
 USER appuser
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
