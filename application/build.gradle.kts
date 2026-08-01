@@ -1,13 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.4.10"
+    id("kotlin-conventions")
 }
 
 group = "com.bankaccount"
 version = "0.0.1-SNAPSHOT"
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_25
-}
 
 repositories {
     mavenCentral()
@@ -17,15 +13,27 @@ dependencies {
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     
+    // Dépendance sur le module domain
+    implementation(project(":domain"))
+    
+    // Spring Boot (pour les annotations @Component, @Service, etc.)
+    implementation("org.springframework.boot:spring-boot-starter:4.0.0")
+    
+    // Validation
+    implementation("org.springframework.boot:spring-boot-starter-validation:4.0.0")
+    
+    // Jackson pour la sérialisation
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    
     // Tests
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
     
-    // Mockito pour les tests unitaires
+    // Mockito
     testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
     
-    // AssertJ pour des assertions fluides
+    // AssertJ
     testImplementation("org.assertj:assertj-core:3.26.3")
 }
 

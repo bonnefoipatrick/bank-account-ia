@@ -1,0 +1,63 @@
+# Version catalog is a central place for you to declare and version dependencies
+# https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
+# https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
+
+[versions]
+jdk = "25"
+kotlin = "2.3.21"
+kotlinxDatetime = "0.7.1"
+kotlinxSerializationJSON = "1.9.0"
+kotlinxCoroutines = "1.10.2"
+kotlinxCoroutinesJdk = "1.7.3"
+
+# dependency versions
+kotlinLogging = "8.0.02"
+logbackLogging = "1.5.38"
+logbackAppenderLogging = "9.0"
+sl4jLogging="2.0.18"
+arrowVersion = "2.2.0"
+springBoot = "4.0.6"
+springGradleDependencyManagement = "1.1.7"
+dokka = "2.2.0"
+detekt = "1.23.8"
+avro = "1.12.1"
+avro4k = "2.10.1"
+
+[libraries]
+microutils-kotlinLogging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlinLogging" }
+logback-Logging = { module = "ch.qos.logback:logback-classic", version.ref = "logbackLogging" }
+logbackAppender-Logging = { module = "net.logstash.logback:logstash-logback-encoder", version.ref = "logbackAppenderLogging" }
+sl4j-Logging = { module = "org.slf4j:slf4j-api", version.ref = "sl4jLogging" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-allopenPlugin = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
+kotlin-noargPlugin = { module = "org.jetbrains.kotlin:kotlin-noarg", version.ref = "kotlin" }
+springBoot-gradlePlugin = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "springBoot" }
+spring-dependencyManagementPlugin = { module = "io.spring.gradle:dependency-management-plugin", version.ref = "springGradleDependencyManagement" }
+detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+
+avro = {module = "org.apache.avro:avro", version.ref= "avro"}
+avro-tools = {module = "org.apache.avro:avro-tools", version.ref = "avro"}
+avro4k = {module = "com.github.avro-kotlin.avro4k:avro4k-core", version.ref ="avro4k"}
+avro4kserializer= { module = "com.github.avro-kotlin.avro4k:avro4k-confluent-kafka-serializer", version.ref ="avro4k"}
+
+kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinxSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJSON" }
+kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinxCoroutinesReactor = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactor", version.ref = "kotlinxCoroutines" }
+kotlinxCoroutinesJdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlinxCoroutinesJdk" }
+kotlinxCoroutinesSlf4j = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-slf4j", version.ref = "kotlinxCoroutinesJdk" }
+
+arrow = { module ="io.arrow-kt:arrow-core", version.ref ="arrowVersion"}
+arrowfx = { module ="io.arrow-kt:arrow-fx-coroutines", version.ref ="arrowVersion"}
+arrowfxjvm = { module ="io.arrow-kt:arrow-fx-coroutines-jvm", version.ref ="arrowVersion"}
+
+# Libraries can be bundled together for easier import
+[bundles]
+kotlinxBundle = ["kotlinxDatetime", "kotlinxSerialization", "kotlinxCoroutines"]
+loggingBundle = ["microutils-kotlinLogging", "logback-Logging","logbackAppender-Logging"]
+kotlinxCoroutinesBundle = ["kotlinxCoroutines", "kotlinxCoroutinesReactor", "kotlinxCoroutinesJdk8", "kotlinxCoroutinesSlf4j"]
+arrowBundle = ["arrow","arrowfx","arrowfxjvm"]
+
+[plugins]
+kotlinPluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

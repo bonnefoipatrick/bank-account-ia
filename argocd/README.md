@@ -63,14 +63,14 @@ argocd app sync bank-account-prod
 
 ### bank-account-dev
 - **Namespace**: `bank-account-dev`
-- **Source**: `bank-account/k8s/overlays/dev`
+- **Source**: `../k8s/overlays/dev`
 - **Synchronisation**: Automatique (toutes les 5 minutes)
 - **Self-Healing**: Activé
 - **Prune**: Activé
 
 ### bank-account-prod
 - **Namespace**: `bank-account-prod`
-- **Source**: `bank-account/k8s/overlays/prod`
+- **Source**: `../k8s/overlays/prod`
 - **Synchronisation**: Manuelle uniquement
 - **Self-Healing**: Désactivé
 - **Prune**: Désactivé

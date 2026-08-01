@@ -56,7 +56,7 @@ Ce dossier contient la configuration du pipeline Jenkins pour construire, tester
    - Repository URL: `https://github.com/bonnefoipatrick/bank-account-ia.git`
    - Credentials: `GITHUB_CREDENTIALS`
    - Branch: `main`
-   - Script Path: `bank-account/jenkins/Jenkinsfile`
+   - Script Path: `Jenkinsfile`
 6. Sauvegarder
 
 ## 📊 Pipeline Stages

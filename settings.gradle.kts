@@ -1,4 +1,7 @@
-rootProject.name = "bank-account-ia"
+rootProject.name = "bank-account"
 
-// Inclure le projet bank-account comme sous-projet
-include("bank-account")
+// Déclare les sous-modules
+include("domain")
+include("application")
+include("infrastructure")
+include("app")
