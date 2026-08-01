@@ -29,7 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     
     // Kafka
-    implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-kafka")
     
     // Database (H2)
     runtimeOnly("com.h2database:h2")
@@ -44,7 +44,7 @@ dependencies {
     
     // Tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.kafka:spring-kafka-test")
+    // spring-kafka-test est inclus dans spring-boot-starter-kafka, pas besoin de l'ajouter séparément
     
     // Spring Security Test
     testImplementation("org.springframework.security:spring-security-test")

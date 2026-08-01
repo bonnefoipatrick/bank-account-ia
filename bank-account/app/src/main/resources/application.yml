@@ -5,7 +5,7 @@ spring:
   application:
     name: bank-account-service
 
-  # Configuration de la base de données H2 (en mémoire)
+  # Configuration de la base de donnes H2 (en mmoire)
   datasource:
     url: jdbc:h2:mem:bankdb
     driver-class-name: org.h2.Driver
@@ -25,23 +25,24 @@ spring:
       hibernate:
         format_sql: true
 
-# Configuration Kafka (par défaut, utilise un broker local)
-kafka:
-  bootstrap-servers: localhost:9092
-  
-  producer:
-    key-serializer: org.apache.kafka.common.serialization.StringSerializer
-    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    acks: all
-    retries: 3
+  # Configuration Kafka (par dfaut, utilise un broker local)
+  # Avec spring-boot-starter-kafka, nous utilisons le prfixe spring.kafka
+  kafka:
+    bootstrap-servers: localhost:9092
+    
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
 
-  consumer:
-    group-id: bank-account-group
-    auto-offset-reset: earliest
-    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-    properties:
-      spring.json.trusted.packages: "com.bankaccount.application.command,com.bankaccount.application.event"
+    consumer:
+      group-id: bank-account-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.bankaccount.application.command,com.bankaccount.application.event"
 
 # Logging
 logging:
