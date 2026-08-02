@@ -1,6 +1,7 @@
 package com.bankaccount.domain.service
 
 import com.bankaccount.domain.exception.AccountAlreadyExistsException
+import com.bankaccount.domain.exception.AccountNotExistingException
 import com.bankaccount.domain.exception.AccountNotFoundException
 import com.bankaccount.domain.exception.InsufficientBalanceException
 import com.bankaccount.domain.model.Account
@@ -48,7 +49,7 @@ class AccountService(
      */
     fun getAccountById(id: UUID): Account {
         return accountRepository.findById(id)
-            ?: throw AccountNotFoundException(id)
+            ?: throw AccountNotFoundException(id.toString())
     }
 
     /**
@@ -56,7 +57,7 @@ class AccountService(
      */
     fun getAccountByNumber(accountNumber: String): Account {
         return accountRepository.findByAccountNumber(accountNumber)
-            ?: throw AccountNotFoundException(accountNumber)
+            ?: throw AccountNotExistingException(accountNumber)
     }
 
     /**

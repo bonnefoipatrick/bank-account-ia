@@ -12,6 +12,7 @@ import java.util.UUID
 @Table(name = "accounts")
 data class AccountEntity(
     @Id
+    @Column(name = "id", nullable = false)
     @GeneratedValue(generator = "UUID")
     val id: UUID? = null,
 

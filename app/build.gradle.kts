@@ -17,6 +17,8 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     // D&pendance sur le module infrastructure
     implementation(project(":infrastructure"))
 }

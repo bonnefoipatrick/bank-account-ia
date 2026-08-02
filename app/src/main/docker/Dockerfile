@@ -16,7 +16,7 @@ COPY bank-account/infrastructure ./bank-account/infrastructure/
 COPY bank-account/app ./bank-account/app/
 
 # Builder l'application avec Gradle
-# Note: Spring Boot 4.0.0 et Kotlin 2.4.10 ncessitent Java 25
+# Note: Spring Boot 4.0.0 et Kotlin 2.4.10 nécessitent Java 25
 RUN cd bank-account && \
     ./gradlew :app:bootJar --no-daemon --stacktrace --java-home=/usr/lib/jvm/eclipse-temurin-25-jdk-jammy
 
@@ -27,7 +27,7 @@ WORKDIR /app
 # Copier le JAR construit
 COPY --from=build /workspace/bank-account/app/build/libs/*.jar app.jar
 
-# Creer un utilisateur non-root pour la scurit9
+# Créeer un utilisateur non-root pour la sécurité9
 RUN useradd -r -m -U -d /app -s /bin/false appuser && \
     chown -R appuser:appuser /app
 
@@ -38,6 +38,6 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/actuator/health || exit 1
 
-# Dmarrer l'application
+# Démarrer l'application
 USER appuser
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

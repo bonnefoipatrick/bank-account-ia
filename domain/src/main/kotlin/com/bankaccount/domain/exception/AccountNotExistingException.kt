@@ -5,6 +5,6 @@ import java.util.UUID
 /**
  * Exception levée lorsqu'un compte bancaire n'est pas trouvé.
  */
-class AccountNotFoundException(message: String) : RuntimeException(
-    "Account with ID $message not found"
+class AccountNotExistingException(message: String) : RuntimeException(
+    "Account with number $message not found"
 )
