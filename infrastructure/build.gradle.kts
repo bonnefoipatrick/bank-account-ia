@@ -50,21 +50,21 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     
     // Mockito
-    testImplementation("org.mockito:mockito-core")
-    testImplementation("org.mockito.kotlin:mockito-kotlin")
+    testImplementation("org.mockito:mockito-core:5.23.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
     
     // AssertJ
     testImplementation("org.assertj:assertj-core")
     
     // Cucumber pour les tests BDD
-    testImplementation("io.cucumber:cucumber-java")
-    testImplementation("io.cucumber:cucumber-junit")
-    testImplementation("io.cucumber:cucumber-spring")
+    testImplementation("io.cucumber:cucumber-java:7.34.4")
+    testImplementation("io.cucumber:cucumber-junit:7.34.4")
+    testImplementation("io.cucumber:cucumber-spring:7.34.4")
     
     // RestAssured pour les tests API
-    testImplementation("io.rest-assured:rest-assured")
-    testImplementation("io.rest-assured:json-path")
-    testImplementation("io.rest-assured:xml-path")
+    testImplementation("io.rest-assured:rest-assured:6.0.1")
+    testImplementation("io.rest-assured:json-path:6.0.1")
+    testImplementation("io.rest-assured:xml-path:6.0.1")
     
     // JSON Assert pour les tests API
     testImplementation("org.skyscreamer:jsonassert")

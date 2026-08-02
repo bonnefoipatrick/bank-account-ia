@@ -1,0 +1,34 @@
+{
+  "name": "bank-account-frontend",
+  "version": "1.0.0",
+  "description": "Frontend Angular pour bank-account-ia",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --proxy-config proxy.conf.json",
+    "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.2",
+    "zone.js": "^0.16.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.1.0",
+    "@angular/cli": "^22.1.0",
+    "@angular/compiler-cli": "^22.1.0",
+    "typescript": "~6.0.0"
+  },
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
+  }
+}

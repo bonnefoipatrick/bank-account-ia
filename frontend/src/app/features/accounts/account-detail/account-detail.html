@@ -1,0 +1,150 @@
+<section class="page">
+  <a routerLink="/accounts" class="back-link">← Retour aux comptes</a>
+
+  @if (loading()) {
+    <p class="empty">Chargement du compte…</p>
+  }
+
+  @if (error()) {
+    <p class="alert alert--error">{{ error() }}</p>
+  }
+
+  @if (account(); as acc) {
+    <header class="summary card">
+      <div>
+        <h1>{{ acc.accountNumber }}</h1>
+        <p class="summary__customer">Client : {{ acc.customerId }}</p>
+      </div>
+      <div class="summary__balance">
+        <span class="summary__amount">{{ acc.balance | accountCurrency: acc.currency }}</span>
+        <span class="badge" [class.badge--active]="acc.isActive" [class.badge--inactive]="!acc.isActive">
+          {{ acc.isActive ? 'Actif' : 'Inactif' }}
+        </span>
+      </div>
+    </header>
+
+    @if (actionMessage()) {
+      <p class="alert alert--success">{{ actionMessage() }}</p>
+    }
+    @if (actionError()) {
+      <p class="alert alert--error">{{ actionError() }}</p>
+    }
+
+    <div class="grid">
+      <div class="card">
+        <h2>Dépôt / Retrait</h2>
+        <form (ngSubmit)="submitMovement()" class="form">
+          <div class="form__field">
+            <label for="movementType">Type</label>
+            <select id="movementType" [ngModel]="movementType()" (ngModelChange)="movementType.set($event)" name="movementType">
+              <option value="DEPOSIT">Dépôt</option>
+              <option value="WITHDRAWAL">Retrait</option>
+            </select>
+          </div>
+          <div class="form__field">
+            <label for="movementAmount">Montant</label>
+            <input
+              id="movementAmount"
+              type="number"
+              step="0.01"
+              min="0.01"
+              [ngModel]="movementAmount()"
+              (ngModelChange)="movementAmount.set($event)"
+              name="movementAmount"
+            />
+          </div>
+          <div class="form__field">
+            <label for="movementDescription">Description</label>
+            <input
+              id="movementDescription"
+              type="text"
+              [ngModel]="movementDescription()"
+              (ngModelChange)="movementDescription.set($event)"
+              name="movementDescription"
+            />
+          </div>
+          <button type="submit" class="btn btn--primary" [disabled]="actionPending() || !acc.isActive">
+            Valider
+          </button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Virement</h2>
+        <form (ngSubmit)="submitTransfer()" class="form">
+          <div class="form__field">
+            <label for="transferTo">Compte destinataire (UUID)</label>
+            <input
+              id="transferTo"
+              type="text"
+              [ngModel]="transferToAccountId()"
+              (ngModelChange)="transferToAccountId.set($event)"
+              name="transferTo"
+            />
+          </div>
+          <div class="form__field">
+            <label for="transferAmount">Montant</label>
+            <input
+              id="transferAmount"
+              type="number"
+              step="0.01"
+              min="0.01"
+              [ngModel]="transferAmount()"
+              (ngModelChange)="transferAmount.set($event)"
+              name="transferAmount"
+            />
+          </div>
+          <div class="form__field">
+            <label for="transferDescription">Description</label>
+            <input
+              id="transferDescription"
+              type="text"
+              [ngModel]="transferDescription()"
+              (ngModelChange)="transferDescription.set($event)"
+              name="transferDescription"
+            />
+          </div>
+          <button type="submit" class="btn btn--primary" [disabled]="actionPending() || !acc.isActive">
+            Virer
+          </button>
+        </form>
+      </div>
+    </div>
+
+    @if (acc.isActive) {
+      <button class="btn btn--danger deactivate-btn" (click)="deactivate()" [disabled]="actionPending()">
+        Désactiver le compte
+      </button>
+    }
+
+    <h2 class="history-title">Historique des transactions</h2>
+    @if (transactions().length === 0) {
+      <p class="empty">Aucune transaction pour ce compte.</p>
+    } @else {
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Montant</th>
+              <th>Description</th>
+              <th>Référence</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tx of transactions(); track tx.id) {
+              <tr>
+                <td>{{ tx.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ tx.type }}</td>
+                <td>{{ tx.amount | accountCurrency: acc.currency }}</td>
+                <td>{{ tx.description }}</td>
+                <td>{{ tx.reference ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>

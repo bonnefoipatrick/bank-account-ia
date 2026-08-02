@@ -1,0 +1,25 @@
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.search {
+  margin-bottom: 1.5rem;
+}
+
+.search__row {
+  display: flex;
+  gap: 0.6rem;
+
+  input { flex: 1; }
+}
+
+.link { font-weight: 600; }

@@ -1,0 +1,74 @@
+<section class="page">
+  <a routerLink="/accounts" class="back-link">← Retour aux comptes</a>
+
+  <div class="card">
+    <h1>Nouveau compte</h1>
+
+    @if (error()) {
+      <p class="alert alert--error">{{ error() }}</p>
+    }
+
+    <form (ngSubmit)="submit()" class="form">
+      <div class="form__field">
+        <label for="customerId">Identifiant client (UUID)</label>
+        <input
+          id="customerId"
+          type="text"
+          [ngModel]="form().customerId"
+          (ngModelChange)="updateField('customerId', $event)"
+          name="customerId"
+          required
+        />
+      </div>
+
+      <div class="form__field">
+        <label for="accountNumber">Numéro de compte</label>
+        <input
+          id="accountNumber"
+          type="text"
+          [ngModel]="form().accountNumber"
+          (ngModelChange)="updateField('accountNumber', $event)"
+          name="accountNumber"
+          required
+        />
+      </div>
+
+      <div class="form__row">
+        <div class="form__field">
+          <label for="initialBalance">Solde initial</label>
+          <input
+            id="initialBalance"
+            type="number"
+            step="0.01"
+            min="0"
+            [ngModel]="form().initialBalance"
+            (ngModelChange)="updateField('initialBalance', $event)"
+            name="initialBalance"
+          />
+        </div>
+
+        <div class="form__field">
+          <label for="currency">Devise</label>
+          <select
+            id="currency"
+            [ngModel]="form().currency"
+            (ngModelChange)="updateField('currency', $event)"
+            name="currency"
+          >
+            <option value="EUR">EUR</option>
+            <option value="USD">USD</option>
+            <option value="GBP">GBP</option>
+            <option value="CHF">CHF</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form__actions">
+        <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+          {{ submitting() ? 'Création…' : 'Créer le compte' }}
+        </button>
+        <a routerLink="/accounts" class="btn btn--secondary">Annuler</a>
+      </div>
+    </form>
+  </div>
+</section>

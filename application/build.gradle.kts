@@ -1,5 +1,6 @@
 plugins {
     id("kotlin-conventions")
+    id("spring-conventions")
 }
 
 group = "com.bankaccount"
@@ -17,10 +18,10 @@ dependencies {
     implementation(project(":domain"))
     
     // Spring Boot (pour les annotations @Component, @Service, etc.)
-    implementation("org.springframework.boot:spring-boot-starter:4.0.0")
+    implementation("org.springframework.boot:spring-boot-starter")
     
     // Validation
-    implementation("org.springframework.boot:spring-boot-starter-validation:4.0.0")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     
     // Jackson pour la sérialisation
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -30,7 +31,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
     
     // Mockito
-    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation("org.mockito:mockito-core:5.23.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
     
     // AssertJ

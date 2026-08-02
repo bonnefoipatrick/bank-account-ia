@@ -1,0 +1,64 @@
+<section class="page">
+  <header class="page__header">
+    <h1>Comptes bancaires</h1>
+    <a routerLink="/accounts/new" class="btn btn--primary">+ Nouveau compte</a>
+  </header>
+
+  <form class="search" (ngSubmit)="search()">
+    <label for="customerId">Identifiant client (UUID)</label>
+    <div class="search__row">
+      <input
+        id="customerId"
+        name="customerId"
+        type="text"
+        placeholder="ex: 3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        [(ngModel)]="customerId"
+        autocomplete="off"
+      />
+      <button type="submit" class="btn btn--primary" [disabled]="loading()">
+        {{ loading() ? 'Recherche…' : 'Rechercher' }}
+      </button>
+    </div>
+  </form>
+
+  @if (error()) {
+    <p class="alert alert--error">{{ error() }}</p>
+  }
+
+  @if (searched() && !loading() && !error() && accounts().length === 0) {
+    <p class="empty">Aucun compte trouvé pour ce client.</p>
+  }
+
+  @if (accounts().length > 0) {
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>N° de compte</th>
+            <th>Solde</th>
+            <th>Devise</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (account of accounts(); track account.id) {
+            <tr>
+              <td>{{ account.accountNumber }}</td>
+              <td>{{ account.balance | accountCurrency: account.currency }}</td>
+              <td>{{ account.currency }}</td>
+              <td>
+                <span class="badge" [class.badge--active]="account.isActive" [class.badge--inactive]="!account.isActive">
+                  {{ account.isActive ? 'Actif' : 'Inactif' }}
+                </span>
+              </td>
+              <td>
+                <a [routerLink]="['/accounts', account.id]" class="link">Détails →</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

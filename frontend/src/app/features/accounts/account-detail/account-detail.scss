@@ -1,0 +1,56 @@
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.summary__customer {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin: 0.2rem 0 0;
+}
+
+.summary__balance {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
+.summary__amount {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form__field { margin-bottom: 0.8rem; }
+.form__field input, .form__field select { width: 100%; }
+
+.deactivate-btn { margin-bottom: 2rem; }
+
+.history-title { margin-bottom: 0.75rem; }
